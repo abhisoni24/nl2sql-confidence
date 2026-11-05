@@ -38,45 +38,73 @@ def short(model: str) -> str:
             .replace("deepseek-coder-6.7b-instruct", "DeepSeek-6.7B"))
 
 
+FONT_DIR = Path("/usr/share/fonts/truetype/crosextra")   # Carlito = metric-compatible Calibri
+
+
+def setup_fonts() -> str:
+    """Register Carlito (open, metric-compatible with Calibri) for reportlab and matplotlib.
+
+    Calibri itself is a licensed Microsoft font and is not available here; Carlito
+    has identical character widths, so the layout matches a Calibri document.
+    Falls back to Helvetica if Carlito is not installed.
+    """
+    from matplotlib import font_manager
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    files = {k: FONT_DIR / f"Carlito-{k}.ttf" for k in ("Regular", "Bold", "Italic", "BoldItalic")}
+    if not all(f.exists() for f in files.values()):
+        return "Helvetica"
+    for k, f in files.items():
+        pdfmetrics.registerFont(TTFont(f"Carlito-{k}", str(f)))
+        font_manager.fontManager.addfont(str(f))
+    pdfmetrics.registerFontFamily("Carlito", normal="Carlito-Regular", bold="Carlito-Bold",
+                                  italic="Carlito-Italic", boldItalic="Carlito-BoldItalic")
+    matplotlib.rcParams["font.family"] = "Carlito"
+    return "Carlito"
+
+
 def figure(ex: pd.DataFrame, path: Path) -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(7.4, 2.35), facecolor=SURFACE)
+    fig, axes = plt.subplots(1, 2, figsize=(7.4, 2.3), facecolor=SURFACE)
     for ax in axes:
         for s in ("top", "right"):
             ax.spines[s].set_visible(False)
         ax.spines["left"].set_color(INK_2); ax.spines["bottom"].set_color(INK_2)
-        ax.tick_params(colors=INK_2, labelsize=7)
+        ax.tick_params(colors=INK_2, labelsize=8)
         ax.grid(axis="y", color=GRID, linewidth=0.6); ax.set_axisbelow(True)
     q = ex[ex.family == "qwen2.5-coder"].sort_values("params_b")
     d = ex[ex.family != "qwen2.5-coder"]
+    ticks = [f"{x:g}B" for x in [0.5, 1.5, 3, 7, 14]]
 
     ax = axes[0]
-    for col, c, lab in (("ex_clean", S1, "clean"), ("ex_pert", S2, "reworded")):
-        ax.plot(q.params_b, 100 * q[col], color=c, lw=2, marker="o", ms=4, label=f"Qwen, {lab}")
+    for col, c, lab in (("ex_clean", S1, "original question"), ("ex_pert", S2, "reworded question")):
+        ax.plot(q.params_b, 100 * q[col], color=c, lw=2, marker="o", ms=4, label=lab)
         ax.scatter(d.params_b, 100 * d[col], color=c, marker="D", s=22, zorder=3,
                    edgecolors="white", linewidths=0.8)
-    ax.set_xscale("log"); ax.minorticks_off()
-    ax.set_xticks(q.params_b, [f"{x:g}B" for x in [0.5, 1.5, 3, 7, 14]])
-    ax.set_ylim(30, 90); ax.set_ylabel("Execution accuracy (%)", fontsize=7, color=INK)
-    ax.set_title("(a) Accuracy rises, the rewrite gap does not close", fontsize=8,
-                 loc="left", color=INK)
-    ax.legend(fontsize=6, frameon=False, loc="lower right")
+    ax.set_xscale("log"); ax.minorticks_off(); ax.set_xticks(q.params_b, ticks)
+    ax.set_ylim(30, 90); ax.set_ylabel("Correct answers (%)", fontsize=8.5, color=INK)
+    ax.set_xlabel("Model size (parameters)", fontsize=8, color=INK_2)
+    ax.set_title("(a) Bigger models are more accurate, but rewording\n     still costs about 10 points",
+                 fontsize=9, loc="left", color=INK)
+    ax.legend(fontsize=7.5, frameon=False, loc="lower right")
 
     ax = axes[1]
     ax.axhline(0.5, color=INK_2, lw=0.8, ls=":")
-    for i, (k, c, lab) in enumerate((("p_gm", S1, "token prob. (p_gm)"),
-                                     ("seq_logprob", S3, "seq. log-prob"),
-                                     ("probe_lr", S2, "hidden-state probe"))):
+    ax.text(0.47, 0.505, "coin flip", fontsize=7, color=INK_2)
+    for i, (k, c, lab) in enumerate((("p_gm", S1, "model's own word probabilities"),
+                                     ("seq_logprob", S3, "probability of the whole query"),
+                                     ("probe_lr", S2, "small network reading internal activity"))):
         j = 1 + 0.06 * (i - 1)
         ax.errorbar(q.params_b * j, q[f"flip_auroc_{k}"],
                     yerr=[q[f"flip_auroc_{k}"] - q[f"flip_lo_{k}"], q[f"flip_hi_{k}"] - q[f"flip_auroc_{k}"]],
                     color=c, lw=1.6, marker="o", ms=3.5, capsize=1.5, label=lab)
         ax.scatter(d.params_b * j, d[f"flip_auroc_{k}"], color=c, marker="D", s=22, zorder=3,
                    edgecolors="white", linewidths=0.8)
-    ax.set_xscale("log"); ax.minorticks_off()
-    ax.set_xticks(q.params_b, [f"{x:g}B" for x in [0.5, 1.5, 3, 7, 14]])
-    ax.set_ylim(0.45, 0.9); ax.set_ylabel("Flip AUROC (0.5 = chance)", fontsize=7, color=INK)
-    ax.set_title("(b) Catching answers broken by a rewrite", fontsize=8, loc="left", color=INK)
-    ax.legend(fontsize=6, frameon=False, loc="upper left", ncol=1)
+    ax.set_xscale("log"); ax.minorticks_off(); ax.set_xticks(q.params_b, ticks)
+    ax.set_ylim(0.45, 0.9); ax.set_ylabel("Warning score", fontsize=8.5, color=INK)
+    ax.set_xlabel("Model size (parameters)", fontsize=8, color=INK_2)
+    ax.set_title("(b) How well each signal warns that rewording\n     broke a correct answer", fontsize=9,
+                 loc="left", color=INK)
+    ax.legend(fontsize=7, frameon=False, loc="upper left")
     fig.tight_layout(pad=0.4)
     fig.savefig(path, dpi=220)
     plt.close(fig)
@@ -91,6 +119,7 @@ def main() -> None:
     ex = pd.read_csv(RES / "cp2_summary/exec_ok/models.csv")
     ts = pd.read_csv(RES / "cp2_summary/ts_ok/models.csv").set_index("model")
     e3 = json.loads((RES / "cp2_e3_qwen2.5-coder-7b/analysis_exec_ok/metrics.json").read_text())
+    font = setup_fonts()          # before drawing, so the figure uses the same font
     fig_path = OUT / "cp2_update_figure.png"
     figure(ex, fig_path)
 
@@ -106,101 +135,114 @@ def main() -> None:
     q14 = ex[ex.model.str.contains("14B")].iloc[0]
 
     # ---- PDF ----------------------------------------------------------------
-    st = lambda size, lead, bold=False, color=INK, space=2: ParagraphStyle(
-        "x", fontName="Helvetica-Bold" if bold else "Helvetica", fontSize=size, leading=lead,
-        textColor=colors.HexColor(color), spaceAfter=space, alignment=TA_LEFT)
-    H, B, SM, HD = st(12.5, 15, True), st(8.4, 10.6), st(7.2, 9, color=INK_2), st(9.4, 11.5, True, space=1)
+    bold = "Carlito-Bold" if font == "Carlito" else "Helvetica-Bold"
+    st = lambda size, lead, b=False, color=INK, space=2: ParagraphStyle(
+        "x", fontName=bold if b else (font if font != "Carlito" else "Carlito-Regular"),
+        fontSize=size, leading=lead, textColor=colors.HexColor(color), spaceAfter=space,
+        alignment=TA_LEFT)
+    H, B, SM, HD = st(13.5, 15.5, True), st(9.1, 10.6, space=1.3), st(7.9, 9.2, color=INK_2), st(10.6, 12.4, True, space=1)
     doc = SimpleDocTemplate(str(OUT / "CP2_progress_update.pdf"), pagesize=letter,
                             leftMargin=0.55 * inch, rightMargin=0.55 * inch,
-                            topMargin=0.45 * inch, bottomMargin=0.4 * inch,
+                            topMargin=0.4 * inch, bottomMargin=0.3 * inch,
                             title="CS 559 Progress Update (Checkpoint 2)")
     s = []
-    s.append(Paragraph("Progress update: does an NL2SQL model's confidence track failures "
-                       "caused by meaning-preserving rewrites?", H))
-    s.append(Paragraph(f"ECE/CS 559, Abhishek and Shubham Harale, Nov 5, 2026. Code: "
+    s.append(Paragraph("Progress update: does a text-to-SQL model notice when rewording breaks its answer?", H))
+    s.append(Paragraph(f"ECE/CS 559 · Abhishek and Shubham Harale · November 5, 2026 · Code: "
                        f"<link href='{args.repo_url}' color='#2a78d6'>{args.repo_url}</link>", SM))
     setup_text = (
-        "<b>Setup.</b> Dr.Spider NLQ sets (9 rewrite types): 7,593 clean/reworded question pairs "
-        "with identical gold SQL, from 1,020 Spider-dev questions. Six models (Qwen2.5-Coder "
-        "0.5B to 14B, DeepSeek-Coder-6.7B), greedy decoding. Labels: execution match on the "
-        "Spider DB (EX) and test-suite match on ~30 to 60 DB variants (TS). A <i>flip</i> is a "
-        "pair right on the clean question and wrong on its rewrite; <i>flip AUROC</i> asks "
-        "whether the confidence drop ranks flips above survivors. 95% CIs: cluster bootstrap "
-        "over clean questions.")
+        "<b>What we did.</b> Text-to-SQL models turn a question into a database query. Asking the "
+        "same question in different words should give the same answer, but often does not. We "
+        "test whether the model's confidence warns us when that happens. Using the Dr.Spider "
+        "benchmark, we took 7,593 pairs of an original and a reworded question that share the same "
+        "correct query (1,020 original questions, 9 kinds of rewording) and ran six open models: "
+        "Qwen2.5-Coder at five sizes (0.5B to 14B parameters) and DeepSeek-Coder (6.7B). An answer "
+        "counts as correct if its query returns the right result. We compared four confidence "
+        "signals: the model's own word probabilities, a corrected (recalibrated) version of them, "
+        "a small neural network trained to read the model's internal activity, and agreement "
+        "among 10 sampled answers. The <i>warning score</i> asks whether confidence falls more when "
+        "rewording turns a correct answer wrong than when it stays correct (0.5 = coin flip, "
+        "1.0 = perfect warning).")
     s.append(Paragraph(setup_text, B))
 
     s.append(Paragraph("Results so far", HD))
-    rows = [["Model", "EX clean → reworded", "TS clean → reworded", "Flip AUROC p_gm",
-             "Flip AUROC probe", "ECE Platt clean → rew."]]
+    rows = [["Model", "Accuracy\n(original → reworded)", "Stricter check\n(original → reworded)",
+             "Warning score:\nmodel's own probabilities", "Warning score:\nsmall network"]]
     for _, r in ex.iterrows():
         t = ts.loc[r.model]
-        rows.append([short(r.model), f"{100*r.ex_clean:.1f} → {100*r.ex_pert:.1f}%",
-                     f"{100*t.ex_clean:.1f} → {100*t.ex_pert:.1f}%",
-                     f"{r.flip_auroc_p_gm:.2f} [{r.flip_lo_p_gm:.2f}, {r.flip_hi_p_gm:.2f}]",
-                     f"{r.flip_auroc_probe_lr:.2f} [{r.flip_lo_probe_lr:.2f}, {r.flip_hi_probe_lr:.2f}]",
-                     f"{r.ece_clean_p_gm_platt:.3f} → {r.ece_pert_p_gm_platt:.3f}"])
-    tbl = Table(rows, colWidths=[0.95*inch, 1.25*inch, 1.25*inch, 1.3*inch, 1.3*inch, 1.25*inch])
+        rows.append([short(r.model), f"{100*r.ex_clean:.1f}% → {100*r.ex_pert:.1f}%",
+                     f"{100*t.ex_clean:.1f}% → {100*t.ex_pert:.1f}%",
+                     f"{r.flip_auroc_p_gm:.2f}  ({r.flip_lo_p_gm:.2f} to {r.flip_hi_p_gm:.2f})",
+                     f"{r.flip_auroc_probe_lr:.2f}  ({r.flip_lo_probe_lr:.2f} to {r.flip_hi_probe_lr:.2f})"])
+    tbl = Table(rows, colWidths=[1.1*inch, 1.6*inch, 1.65*inch, 1.6*inch, 1.6*inch])
+    reg = font if font != "Carlito" else "Carlito-Regular"
     tbl.setStyle(TableStyle([
-        ("FONT", (0, 0), (-1, -1), "Helvetica", 7.4), ("FONT", (0, 0), (-1, 0), "Helvetica-Bold", 7.4),
+        ("FONT", (0, 0), (-1, -1), reg, 8.3), ("FONT", (0, 0), (-1, 0), bold, 8.3),
         ("TEXTCOLOR", (0, 0), (-1, -1), colors.HexColor(INK)),
         ("LINEBELOW", (0, 0), (-1, 0), 0.6, colors.HexColor(INK_2)),
+        ("VALIGN", (0, 0), (-1, 0), "BOTTOM"), ("LEADING", (0, 0), (-1, 0), 9.6),
         ("LINEBELOW", (0, -1), (-1, -1), 0.4, colors.HexColor(GRID)),
-        ("TOPPADDING", (0, 0), (-1, -1), 1.2), ("BOTTOMPADDING", (0, 0), (-1, -1), 1.2)]))
+        ("TOPPADDING", (0, 0), (-1, -1), 1.0), ("BOTTOMPADDING", (0, 0), (-1, -1), 1.0)]))
     s.append(tbl)
-    s.append(Spacer(1, 3))
-    s.append(Image(str(fig_path), width=7.4 * inch, height=2.35 * inch))
-    caption = ("Lines: Qwen2.5-Coder; diamonds: DeepSeek-Coder-6.7B. Error bars: 95% CI. "
-               "Labels: EX. Flip AUROC uses the drop in confidence from clean to reworded.")
+    s.append(Paragraph("Ranges are 95% confidence intervals. The stricter check reruns each query "
+                       "on about 30 to 60 altered copies of the database to catch answers right by accident.", SM))
+    s.append(Image(str(fig_path), width=6.6 * inch, height=2.05 * inch))
+    caption = ("Lines: Qwen2.5-Coder; diamonds: DeepSeek-Coder-6.7B. Bars: 95% confidence intervals.")
     s.append(Paragraph(caption, SM))
+
+    e3d, e3f = e3p["discrimination"], e3p["flip_detection"]
     bullets = [
-        f"<b>Scale buys accuracy, not robustness.</b> Rewording costs {ex.drop_pts.min():.1f} to "
-        f"{ex.drop_pts.max():.1f} EX points at every size (14B: {q14.drop_pts:.1f} "
-        f"[{q14.drop_lo:.1f}, {q14.drop_hi:.1f}]); under TS labels the cost is "
-        f"{ts.drop_pts.min():.1f} to {ts.drop_pts.max():.1f}.",
-        f"<b>Token confidence barely notices a broken answer.</b> Flip AUROC of p_gm is "
-        f"{rng(ex.flip_auroc_p_gm)}, with no gain from 7B to 14B; in {100*min(blind_p):.0f} to "
-        f"{100*max(blind_p):.0f}% of flips confidence did not drop at all.",
-        f"<b>Hidden states carry the missing signal.</b> A linear probe on decoder states, fit on "
-        f"clean questions only and scored on held-out databases, reaches {rng(ex.flip_auroc_probe_lr)} "
-        f"and beats p_gm for every model ({100*min(blind_probe):.0f} to {100*max(blind_probe):.0f}% "
-        f"of flips missed). The pre-set layer (75% depth, mean over SQL tokens) was the best of 6 "
-        f"choices for 5 of 6 models.",
-        f"<b>Calibration fit on clean data degrades under rewording.</b> Platt scaling brings ECE to "
-        f"{rng(ex.ece_clean_p_gm_platt, 3)} on clean questions but {rng(ex.ece_pert_p_gm_platt, 3)} "
-        f"on rewrites (14B: {q14.ece_clean_p_gm_platt:.3f} → {q14.ece_pert_p_gm_platt:.3f}).",
-        f"<b>Sampling (7B, k = 10) ranks answers better but not flips.</b> Agreement of execution "
-        f"results: AUROC {e3p['discrimination']['sc_agree']['clean']:.3f} clean / "
-        f"{e3p['discrimination']['sc_agree']['perturbed']:.3f} reworded vs p_gm "
-        f"{e3p['discrimination']['p_gm']['clean']:.3f} / {e3p['discrimination']['p_gm']['perturbed']:.3f}; "
-        f"flip AUROC {e3p['flip_detection']['sc_agree']['auroc_flip_from_delta']:.3f} vs "
-        f"{e3p['flip_detection']['p_gm']['auroc_flip_from_delta']:.3f}.",
+        f"<b>Bigger models are more accurate but no harder to throw off.</b> Accuracy on original "
+        f"questions rises from {100*ex.ex_clean.min():.0f}% to {100*ex.ex_clean.max():.0f}%, yet "
+        f"rewording costs {ex.drop_pts.min():.0f} to {ex.drop_pts.max():.0f} points at every size. "
+        f"Scaling up does not fix sensitivity to phrasing.",
+        f"<b>The model's own confidence is a weak alarm.</b> Its warning score is only "
+        f"{ex.flip_auroc_p_gm.min():.2f} to {ex.flip_auroc_p_gm.max():.2f}, and in "
+        f"{100*min(blind_p):.0f} to {100*max(blind_p):.0f}% of the cases where rewording broke a "
+        f"correct answer, confidence did not drop at all. Users cannot rely on it to flag these errors.",
+        f"<b>The warning signal exists inside the model.</b> A small network that reads the model's "
+        f"internal activity, trained only on original questions and tested on unseen databases, "
+        f"scores {ex.flip_auroc_probe_lr.min():.2f} to {ex.flip_auroc_probe_lr.max():.2f} and beats the "
+        f"model's own confidence for every model, so a learned confidence check is a practical safeguard.",
+        f"<b>Corrections tuned on standard questions do not fully carry over.</b> After recalibration, "
+        f"the gap between stated confidence and actual accuracy is {ex.ece_clean_p_gm_platt.min():.2f} to "
+        f"{ex.ece_clean_p_gm_platt.max():.2f} on original questions but {ex.ece_pert_p_gm_platt.min():.2f} "
+        f"to {ex.ece_pert_p_gm_platt.max():.2f} on reworded ones (lower is better). Confidence should be "
+        f"checked on reworded inputs, not only on the standard test set.",
+        f"<b>Asking the model 10 times helps rank answers, not catch rewording failures.</b> For the 7B "
+        f"model, agreement among samples separates right from wrong answers best "
+        f"({e3d['sc_agree']['clean']:.2f} vs {e3d['p_gm']['clean']:.2f} for its own probabilities), but "
+        f"it warns no better ({e3f['sc_agree']['auroc_flip_from_delta']:.2f} vs "
+        f"{e3f['p_gm']['auroc_flip_from_delta']:.2f}) at ten times the cost.",
     ]
+    s.append(Paragraph("What we found and what it means", HD))
     for b in bullets:
         s.append(Paragraph("• " + b, B))
 
     s.append(Paragraph("Problems encountered", HD))
     probs = [
-        "<b>Compute.</b> The EC2 instance was unavailable; we moved to a Colab A100 (80 GB) driven "
-        "from the Colab CLI, with a resumable pipeline (stage markers, per-batch writes). Full run: 2.3 h.",
-        f"<b>Lucky matches.</b> Single-DB EX overstates clean accuracy by {gap.min():.1f} to "
-        f"{gap.max():.1f} points vs TS, so we report both labels.",
-        "<b>Dependent pairs.</b> One clean question has up to 37 rewrites (median 6), so pair-level "
-        "tests overstate certainty; all CIs resample clean questions.",
-        f"<b>Confounds.</b> Sequence log-prob is a sum, and output-length change alone gives flip AUROC "
-        f"{min(lenauc):.2f} to {max(lenauc):.2f}; its edge over p_gm is partly length. Agreement over "
-        "k = 10 samples is coarse, so many flips tie at zero change.",
-        "<b>Degenerate decoding.</b> The CPU pilot looped to the token cap in 2.5% of outputs; a "
-        "repetition guard now keeps unfinished outputs at 1% or less.",
+        f"<b>Answers that are right by accident.</b> Checking a query on a single database overstates "
+        f"accuracy by {gap.min():.0f} to {gap.max():.0f} points; we report the stricter check too.",
+        "<b>Rewordings are not independent.</b> One original question has up to 37 rewordings "
+        "(typically 6), so we compute uncertainty by resampling whole questions, not single pairs.",
+        f"<b>Longer answers look less confident.</b> The probability of a whole query falls as the query "
+        f"gets longer, and longer answers are more often wrong; answer length alone scores "
+        f"{min(lenauc):.2f} to {max(lenauc):.2f}, so part of that signal is just length.",
+        "<b>Coarse agreement scores.</b> With 10 samples, agreement moves in 10% steps, so many cases tie.",
+        "<b>Runaway outputs.</b> Small models sometimes repeated text to the length limit (2.5% in our "
+        "pilot); a stopping rule now caps this at 1%.",
     ]
     for p in probs:
         s.append(Paragraph("• " + p, B))
 
     s.append(Paragraph("Experiments that remain", HD))
     rem = [
-        "Length-controlled confidence (per-token and length-matched comparisons) for seq. log-prob and the probe.",
-        "Probe transfer: train on some rewrite types, test on others; add Dr.Spider DB and SQL perturbation families.",
-        "Tie-aware sampling analysis with larger k and a second model; manual audit of ~100 flips for rewrites that change meaning.",
-        "Final presentation (Dec 1 or 3) and paper with code (Dec 4).",
+        "<b>Test a second benchmark besides Dr.Spider</b> with the same six models: Spider-Syn first "
+        "(1,034 original/reworded pairs with the same correct query), then a dataset built on "
+        "different databases, to check that the findings are not specific to one benchmark.",
+        "Separate the effect of answer length from genuine confidence.",
+        "Test the small network on kinds of rewording, and on database and query changes, it never saw in training.",
+        "Hand-check about 100 broken answers to see how often a rewording actually changed the meaning.",
+        "Final presentation (Dec 1 or 3) and final paper with code (Dec 4).",
     ]
     for r in rem:
         s.append(Paragraph("• " + r, B))
@@ -210,16 +252,18 @@ def main() -> None:
     # Markdown copy of the same text (for the repo / quick edits).
     md = lambda t: (t.replace("<b>", "**").replace("</b>", "**").replace("<i>", "*")
                     .replace("</i>", "*"))
-    lines = ["# Progress update (Checkpoint 2): does an NL2SQL model's confidence track "
-             "failures caused by meaning-preserving rewrites?", "",
-             f"ECE/CS 559, Abhishek and Shubham Harale, Nov 5, 2026. Code: {args.repo_url}", "",
+    lines = ["# Progress update: can a text-to-SQL model tell when rewording a question has "
+             "broken its answer?", "",
+             f"ECE/CS 559 · Abhishek and Shubham Harale · November 5, 2026 · Code: {args.repo_url}", "",
              md(setup_text), "", "## Results so far", "",
-             "| " + " | ".join(rows[0]) + " |", "|" + "---|" * len(rows[0])]
+             "| " + " | ".join(h.replace("\n", " ") for h in rows[0]) + " |", "|" + "---|" * len(rows[0])]
     lines += ["| " + " | ".join(r) + " |" for r in rows[1:]]
-    lines += ["", f"![figure]({fig_path.name})", "", caption, ""]
+    lines += ["", "Ranges in brackets are 95% confidence intervals. The stricter check reruns each "
+              "query on about 30 to 60 altered copies of the database.", "",
+              f"![figure]({fig_path.name})", "", caption, "", "## What we found and what it means", ""]
     lines += [f"- {md(b)}" for b in bullets]
     lines += ["", "## Problems encountered", ""] + [f"- {md(p)}" for p in probs]
-    lines += ["", "## Experiments that remain", ""] + [f"- {r}" for r in rem]
+    lines += ["", "## Experiments that remain", ""] + [f"- {md(r)}" for r in rem]
     (OUT / "CP2_progress_update.md").write_text("\n".join(lines) + "\n")
     print("wrote", OUT / "CP2_progress_update.md")
 

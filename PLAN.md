@@ -1,7 +1,8 @@
 # PLAN: Does model confidence track perturbation-induced NL2SQL failures?
 
 ECE/CS 559 group project (Boss + Shubham Harale). Plan preview, written before implementation.
-Status legend: `[x]` done, `[ ]` open. Checkpoint 1 (CP1) is the scope of this iteration.
+Status legend: `[x]` done, `[ ]` open. CP0 to CP2 are done; CP3 is next. Working notes for the
+next steps (status, hypotheses, priorities): `ROADMAP.md`.
 
 ## 1. Question in one line
 
@@ -15,6 +16,15 @@ gold (both): SELECT name, capacity FROM stadium ORDER BY average DESC LIMIT 1
 ```
 
 If confidence stays high on `q'` failures, confidence is a poor guard against paraphrase-induced errors.
+
+### Project goals
+
+| id | goal | status |
+|---|---|---|
+| G1 | Measure how often meaning-preserving rewrites break correct answers, across model sizes | done on Dr.Spider (CP2) |
+| G2 | Test whether confidence signals (token probabilities, calibration, sampling, hidden-state probe) warn of those breaks | done on Dr.Spider (CP2) |
+| G3 | **Show the findings hold on more than one dataset**: repeat G1 and G2 with the same models on a second benchmark besides Dr.Spider (instructor request) | open (CP3) |
+| G4 | Rule out confounds (answer length, label noise) and test probe transfer to unseen rewrite types and datasets | open (CP3) |
 
 ## 2. Data (verified on disk, 2026-10-05)
 
@@ -126,6 +136,9 @@ Harness changes (all tested; `pytest` 21 fast + 2 slow model tests):
 - [x] Full run on GPU, then write-up (`results/cp2_summary/<label>/CP2_SUMMARY.md`)
 
 ### CP3: Remaining experiments (target: before Dec 1 final talk)
+- [ ] **Second dataset (G3, instructor request):** same six models on Spider-Syn (1,034 paired
+      original/synonym questions, same gold SQL, MIT license; verified 2026-11-05), then a benchmark on
+      different databases (candidates and trade-offs in `ROADMAP.md`)
 - [ ] Length-controlled confidence comparisons (seq_logprob edge is partly output length)
 - [ ] Probe transfer across rewrite types; add DB_* and SQL_* perturbation families (E7)
 - [ ] Tie-aware sampling analysis, larger k, a second model

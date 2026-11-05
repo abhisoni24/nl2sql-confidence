@@ -1,8 +1,8 @@
 # nl2sql_confidence
 
-ECE/CS 559 project: **does a text-to-SQL model's confidence track failures caused by
+ECE/CS 559 project (code: https://github.com/abhisoni24/nl2sql-confidence): **does a text-to-SQL model's confidence track failures caused by
 meaning-preserving question rewrites?** Paired study on Dr.Spider NLQ twins.
-See `PLAN.md` for design and checkpoints. Latest results: `reports/cp2/CP2_progress_update.pdf`
+See `PLAN.md` for design and checkpoints, and `ROADMAP.md` for current status and next steps. Latest results: `reports/cp2/CP2_progress_update.pdf`
 (one page) and `results/cp2_summary/<label>/CP2_SUMMARY.md` (all tables).
 Large per-example outputs (`labeled.jsonl`, `pairs_scored.csv`) are kept locally, not in git.
 
