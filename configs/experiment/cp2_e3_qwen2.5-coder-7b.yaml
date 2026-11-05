@@ -1,0 +1,28 @@
+# CP2 / E3 sampling-based confidence: Qwen2.5-Coder-7B, 3 pilot sets, k = 10.
+# Greedy predictions (and their labels) are reused from the matching E1 run.
+defaults:
+  - base
+  - data/drspider_nlq_pilot3_all
+  - prompt/zero_shot_fence
+  - generation/greedy
+  - experiment/_cp2_common
+  - model/gpu/qwen2.5-coder-7b
+
+run_name: cp2_e3_qwen2.5-coder-7b
+
+sampling:
+  k: 10
+  temperature: 0.7
+  top_p: 0.95
+  prompts_per_batch: 8        # x k = 80 sequences per generate call
+
+consistency:
+  greedy_run: cp2_e1_qwen2.5-coder-7b
+  timeout_s: 5
+  workers: auto
+
+features: {enabled: false}    # E3 does not need hidden states
+
+analysis:
+  confidence_metrics: [p_gm, p_min, seq_logprob, neg_entropy, sc_agree, sc_majority, sc_neg_entropy]
+  calibrated_metrics: [p_gm, sc_agree, sc_majority]

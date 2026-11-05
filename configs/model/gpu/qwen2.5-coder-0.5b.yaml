@@ -1,0 +1,8 @@
+model:
+  hf_id: Qwen/Qwen2.5-Coder-0.5B-Instruct
+  family: qwen2.5-coder
+  params_b: 0.49          # billions, from the HF safetensors index
+  revision: ea3f2471cf1b1f0db85067f1ef93848e38e88c25
+  dtype: bfloat16
+  device: auto
+generation: {batch_size: 64}

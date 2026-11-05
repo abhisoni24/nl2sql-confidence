@@ -1,0 +1,32 @@
+# All 9 Dr.Spider NLQ perturbation sets, every pair (CP2 / E1).
+# 7,593 pairs -> 7,214 unique questions to run (1,020 clean + 6,214 perturbed texts,
+# 20 of which coincide with some clean question; counted 2026-11-05).
+# Pairs sharing a clean question are dependent; analysis uses a cluster bootstrap
+# over clean questions (analysis.cluster_key) instead of dropping them.
+data:
+  name: drspider_nlq_all
+  source_url: https://media.githubusercontent.com/media/awslabs/diagnostic-robustness-text-to-sql/main/data.tar.gz
+  sha256: d0f47e4d2c9202f4fd2d956a34e9dd1ff8180c1c9e58cf5b530c13fefaaa3ba9
+  archive_name: drspider_data.tar.gz
+  extract_dir: drspider
+  db_subdir: Spider-dev/databases
+  perturbation_sets:
+    - NLQ_keyword_synonym
+    - NLQ_keyword_carrier
+    - NLQ_column_synonym
+    - NLQ_column_carrier
+    - NLQ_column_attribute
+    - NLQ_column_value
+    - NLQ_value_synonym
+    - NLQ_multitype
+    - NLQ_others
+  pairs_per_set: null
+  one_pair_per_question: false
+
+  # E2: test-suite databases (Zhong et al., EMNLP 2020), Google Drive file from
+  # github.com/taoyds/test-suite-sql-eval. 1.27 GB zip; only Spider-dev DB folders
+  # are extracted. Each DB has ~28-60 variants incl. the original.
+  test_suite:
+    url: https://drive.usercontent.google.com/download?id=1mkCx2GOFIqNesD4y8TDAO1yX1QZORP5w&export=download&confirm=t
+    archive_name: testsuitedatabases.zip
+    extract_dir: testsuite

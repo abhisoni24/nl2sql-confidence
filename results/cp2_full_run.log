@@ -1,0 +1,99 @@
+19:07:51 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] prepare: started
+19:07:53 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] prepare: done in 0.0 min
+19:07:53 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] infer_attempt: started
+19:12:51 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] infer_attempt: done in 5.0 min
+19:12:52 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] evaluate: started
+19:12:52 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] prepare: started
+19:12:54 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] prepare: done in 0.0 min
+19:12:54 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] infer_attempt: started
+19:14:33 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] evaluate: done in 1.7 min
+19:14:33 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] augment: started
+19:15:25 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] augment: done in 0.9 min
+19:15:25 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] analyze: started
+19:18:12 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] analyze: done in 2.8 min
+19:18:12 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] verify_exec_ok: started
+19:18:17 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] verify_exec_ok: done in 0.1 min
+19:18:17 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] verify_ts_ok: started
+19:18:22 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-0.5b] verify_ts_ok: done in 0.1 min
+19:19:46 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] infer_attempt: done in 6.9 min
+19:19:46 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] evaluate: started
+19:19:46 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] prepare: started
+19:19:48 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] prepare: done in 0.0 min
+19:19:48 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] infer_attempt: started
+19:20:50 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] evaluate: done in 1.1 min
+19:20:50 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] augment: started
+19:21:57 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] augment: done in 1.1 min
+19:21:57 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] analyze: started
+19:24:49 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] analyze: done in 2.9 min
+19:24:49 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] verify_exec_ok: started
+19:24:54 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] verify_exec_ok: done in 0.1 min
+19:24:54 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] verify_ts_ok: started
+19:25:00 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-1.5b] verify_ts_ok: done in 0.1 min
+19:31:00 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] infer_attempt: done in 11.2 min
+19:31:00 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] prepare: started
+19:31:00 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] evaluate: started
+19:31:03 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] prepare: done in 0.0 min
+19:31:03 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] infer_attempt: started
+19:32:19 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] evaluate: done in 1.3 min
+19:32:19 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] augment: started
+19:33:30 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] augment: done in 1.2 min
+19:33:30 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] analyze: started
+19:36:26 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] analyze: done in 2.9 min
+19:36:26 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] verify_exec_ok: started
+19:36:31 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] verify_exec_ok: done in 0.1 min
+19:36:31 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] verify_ts_ok: started
+19:36:37 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-3b] verify_ts_ok: done in 0.1 min
+19:47:12 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] infer_attempt: done in 16.2 min
+19:47:13 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] evaluate: started
+19:47:13 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] prepare: started
+19:47:14 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] prepare: done in 0.0 min
+19:47:14 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] sample_attempt: started
+19:48:32 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] evaluate: done in 1.3 min
+19:48:32 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] augment: started
+19:50:00 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] augment: done in 1.5 min
+19:50:00 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] analyze: started
+19:53:01 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] analyze: done in 3.0 min
+19:53:01 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] verify_exec_ok: started
+19:53:06 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] verify_exec_ok: done in 0.1 min
+19:53:06 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] verify_ts_ok: started
+19:53:12 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-7b] verify_ts_ok: done in 0.1 min
+20:20:16 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] sample_attempt: done in 33.0 min
+20:20:16 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] score_consistency: started
+20:20:16 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] prepare: started
+20:20:19 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] prepare: done in 0.1 min
+20:20:19 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] infer_attempt: started
+20:21:02 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] score_consistency: done in 0.8 min
+20:21:02 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] analyze: started
+20:22:37 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] analyze: done in 1.6 min
+20:22:37 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] verify_exec_ok: started
+20:22:39 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] verify_exec_ok: done in 0.0 min
+20:22:39 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] verify_ts_ok: started
+20:22:42 | INFO | run_cp2 | [cp2_e3_qwen2.5-coder-7b] verify_ts_ok: done in 0.0 min
+20:45:51 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] infer_attempt: done in 25.5 min
+20:45:51 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] evaluate: started
+20:45:51 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] prepare: started
+20:45:54 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] prepare: done in 0.0 min
+20:45:54 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] infer_attempt: started
+20:48:00 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] evaluate: done in 2.1 min
+20:48:00 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] augment: started
+20:49:25 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] augment: done in 1.4 min
+20:49:25 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] analyze: started
+20:52:23 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] analyze: done in 3.0 min
+20:52:23 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] verify_exec_ok: started
+20:52:28 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] verify_exec_ok: done in 0.1 min
+20:52:28 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] verify_ts_ok: started
+20:52:33 | INFO | run_cp2 | [cp2_e1_deepseek-coder-6.7b] verify_ts_ok: done in 0.1 min
+21:19:40 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] infer_attempt: done in 33.8 min
+21:19:40 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] evaluate: started
+21:21:01 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] evaluate: done in 1.3 min
+21:21:01 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] augment: started
+21:22:41 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] augment: done in 1.7 min
+21:22:41 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] analyze: started
+21:25:43 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] analyze: done in 3.0 min
+21:25:43 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] verify_exec_ok: started
+21:25:48 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] verify_exec_ok: done in 0.1 min
+21:25:48 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] verify_ts_ok: started
+21:25:53 | INFO | run_cp2 | [cp2_e1_qwen2.5-coder-14b] verify_ts_ok: done in 0.1 min
+21:25:55 | INFO | compare_models | [exec_ok] summary for 6 models -> /content/cp2_runs/results/cp2_summary/exec_ok
+21:25:56 | INFO | compare_models | [ts_ok] summary for 6 models -> /content/cp2_runs/results/cp2_summary/ts_ok
+21:25:56 | INFO | run_cp2 | Finished in 2.3 h. All stages OK.

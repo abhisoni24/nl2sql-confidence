@@ -1,0 +1,35 @@
+# Settings shared by every CP2 run. Included through each experiment's `defaults`.
+
+features:                     # E5 probe inputs, captured during greedy inference
+  enabled: true
+  layer_fractions: [0.5, 0.75, 1.0]   # relative depth of the layers to keep
+
+evaluation:
+  timeout_s: 10               # single-DB execution budget per query (as CP1)
+  float_decimals: 4
+  test_suite:                 # E2: stricter label ts_ok = correct on every DB variant
+    enabled: true
+    timeout_s: 5              # per variant
+    workers: auto             # processes; auto = CPU count
+
+augment:                      # E5 + E6: out-of-fold scores, grouped by database
+  n_folds: 5                  # GroupKFold over db_id: a DB is never in train and test
+  train_on: clean             # fit only on clean questions; score clean + perturbed
+  label: exec_ok
+  calibration:                # E6: Platt scaling of logit(p_gm), fit on clean
+    source: p_gm
+  probe:                      # E5
+    feature_layer: 0.75       # which captured layer fraction feeds the main probe
+    feature_position: sql_mean   # sql_mean | last_prompt | both
+    mlp: {hidden: 256, dropout: 0.2, weight_decay: 0.01, lr: 0.001,
+          max_epochs: 200, patience: 20, val_fraction: 0.15}
+    lr_C: 0.05                # inverse L2 strength of the logistic-regression probe
+
+analysis:
+  labels: [exec_ok, ts_ok]    # each label gets its own analysis_<label>/ folder
+  primary_confidence: p_gm
+  confidence_metrics: [p_gm, p_min, seq_logprob, neg_entropy, p_gm_platt, probe_lr, probe_mlp]
+  calibrated_metrics: [p_gm, p_gm_platt, probe_lr, probe_mlp]   # probabilities in [0, 1]
+  cluster_key: spider_qid     # bootstrap resamples clean questions, not pairs
+  ece_bins: 10
+  bootstrap_resamples: 1000

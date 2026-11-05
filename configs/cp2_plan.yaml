@@ -1,0 +1,12 @@
+# Run order for Checkpoint 2 (read by scripts/run_cp2.py and scripts/compare_models.py).
+# Smallest models first: early results arrive fast, and problems surface cheaply.
+e1_runs:                                   # E1 size sweep (+ E2, E4, E5, E6 on each)
+  - configs/experiment/cp2_e1_qwen2.5-coder-0.5b.yaml
+  - configs/experiment/cp2_e1_qwen2.5-coder-1.5b.yaml
+  - configs/experiment/cp2_e1_qwen2.5-coder-3b.yaml
+  - configs/experiment/cp2_e1_qwen2.5-coder-7b.yaml
+  - configs/experiment/cp2_e1_deepseek-coder-6.7b.yaml
+  - configs/experiment/cp2_e1_qwen2.5-coder-14b.yaml
+e3_run: configs/experiment/cp2_e3_qwen2.5-coder-7b.yaml   # after the Qwen-7B E1 run
+e3_after: configs/experiment/cp2_e1_qwen2.5-coder-7b.yaml
+summary_dir: cp2_summary                   # under paths.results_root

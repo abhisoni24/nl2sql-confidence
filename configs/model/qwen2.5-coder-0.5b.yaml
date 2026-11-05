@@ -1,0 +1,31 @@
+# Small instruction-tuned code model used for the CPU pilot (CP1).
+model:
+  hf_id: Qwen/Qwen2.5-Coder-0.5B-Instruct
+  revision: ea3f2471cf1b1f0db85067f1ef93848e38e88c25   # pinned HF commit for reproducibility
+  dtype: float32          # float32 on CPU; use bfloat16 on GPU
+  device: auto            # auto = cuda > mps > cpu
+  num_threads: null       # CPU threads for torch; null = torch default
+
+generation:
+  max_new_tokens: 192
+  batch_size: 4           # left-padded batches; examples are length-sorted first
+  # Greedy decoding with no logit processors, so the scored distribution is the
+  # model's raw next-token distribution (no repetition penalty, no temperature).
+  do_sample: false
+  repetition_penalty: 1.0
+
+prompt:
+  system: >-
+    You are an expert in SQLite. Given a database schema and a question,
+    write one SQLite query that answers the question.
+  user_template: |-
+    Database schema:
+    {schema}
+
+    Question: {question}
+
+    Return only the SQL query.
+  # The assistant turn is pre-filled with an opening code fence, and decoding
+  # stops at the closing fence. Confidence is computed over SQL tokens only.
+  assistant_prefix: "```sql\n"
+  stop_string: "```"

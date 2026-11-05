@@ -1,0 +1,8 @@
+model:
+  hf_id: Qwen/Qwen2.5-Coder-7B-Instruct
+  family: qwen2.5-coder
+  params_b: 7.62
+  revision: c03e6d358207e414f1eca0bb1891e29f1db0e242
+  dtype: bfloat16
+  device: auto
+generation: {batch_size: 32}

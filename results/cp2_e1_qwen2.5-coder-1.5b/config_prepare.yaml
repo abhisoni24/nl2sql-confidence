@@ -1,0 +1,111 @@
+seed: 42
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  results_root: /home/claude/cp2_final/results
+run_name: cp2_e1_qwen2.5-coder-1.5b
+data:
+  name: drspider_nlq_all
+  source_url: https://media.githubusercontent.com/media/awslabs/diagnostic-robustness-text-to-sql/main/data.tar.gz
+  sha256: d0f47e4d2c9202f4fd2d956a34e9dd1ff8180c1c9e58cf5b530c13fefaaa3ba9
+  archive_name: drspider_data.tar.gz
+  extract_dir: drspider
+  db_subdir: Spider-dev/databases
+  perturbation_sets:
+  - NLQ_keyword_synonym
+  - NLQ_keyword_carrier
+  - NLQ_column_synonym
+  - NLQ_column_carrier
+  - NLQ_column_attribute
+  - NLQ_column_value
+  - NLQ_value_synonym
+  - NLQ_multitype
+  - NLQ_others
+  pairs_per_set: null
+  one_pair_per_question: false
+  test_suite:
+    url: https://drive.usercontent.google.com/download?id=1mkCx2GOFIqNesD4y8TDAO1yX1QZORP5w&export=download&confirm=t
+    archive_name: testsuitedatabases.zip
+    extract_dir: testsuite
+prompt:
+  system: You are an expert in SQLite. Given a database schema and a question, write
+    one SQLite query that answers the question.
+  user_template: 'Database schema:
+
+    {schema}
+
+
+    Question: {question}
+
+
+    Return only the SQL query.'
+  assistant_prefix: '```sql
+
+    '
+  stop_string: '```'
+generation:
+  max_new_tokens: 192
+  batch_size: 64
+  loop_guard:
+    enabled: true
+    ngram: 10
+    repeats: 3
+features:
+  enabled: true
+  layer_fractions:
+  - 0.5
+  - 0.75
+  - 1.0
+evaluation:
+  timeout_s: 10
+  float_decimals: 4
+  test_suite:
+    enabled: true
+    timeout_s: 5
+    workers: auto
+augment:
+  n_folds: 5
+  train_on: clean
+  label: exec_ok
+  calibration:
+    source: p_gm
+  probe:
+    feature_layer: 0.75
+    feature_position: sql_mean
+    mlp:
+      hidden: 256
+      dropout: 0.2
+      weight_decay: 0.01
+      lr: 0.001
+      max_epochs: 200
+      patience: 20
+      val_fraction: 0.15
+    lr_C: 0.05
+analysis:
+  labels:
+  - exec_ok
+  - ts_ok
+  primary_confidence: p_gm
+  confidence_metrics:
+  - p_gm
+  - p_min
+  - seq_logprob
+  - neg_entropy
+  - p_gm_platt
+  - probe_lr
+  - probe_mlp
+  calibrated_metrics:
+  - p_gm
+  - p_gm_platt
+  - probe_lr
+  - probe_mlp
+  cluster_key: spider_qid
+  ece_bins: 10
+  bootstrap_resamples: 1000
+model:
+  hf_id: Qwen/Qwen2.5-Coder-1.5B-Instruct
+  family: qwen2.5-coder
+  params_b: 1.54
+  revision: 2e1fd397ee46e1388853d2af2c993145b0f1098a
+  dtype: bfloat16
+  device: auto

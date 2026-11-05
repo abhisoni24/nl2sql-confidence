@@ -1,0 +1,21 @@
+# Smoke test of E3 sampling: 0.5B, the same ~50 questions as the E1 smoke run, k = 2.
+# (E3 questions must be a subset of its greedy run's questions; the real E3 uses the
+# 3 pilot sets, which are a subset of E1's 9 sets.)
+defaults:
+  - base
+  - data/drspider_nlq_all
+  - prompt/zero_shot_fence
+  - generation/greedy
+  - experiment/_cp2_common
+  - model/gpu/qwen2.5-coder-0.5b
+  - experiment/cp2_e3_qwen2.5-coder-7b
+
+run_name: smoke_e3_qwen2.5-coder-0.5b
+data: {pairs_per_set: 3, one_pair_per_question: true}
+model:                        # cp2_e3 (included above) sets 7B; switch back to 0.5B
+  hf_id: Qwen/Qwen2.5-Coder-0.5B-Instruct
+  params_b: 0.49
+  revision: ea3f2471cf1b1f0db85067f1ef93848e38e88c25
+sampling: {k: 2, prompts_per_batch: 8}
+consistency: {greedy_run: smoke_e1_qwen2.5-coder-0.5b}
+analysis: {bootstrap_resamples: 200}

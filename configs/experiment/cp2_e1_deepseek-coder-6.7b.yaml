@@ -1,0 +1,10 @@
+# CP2 / E1 size sweep: deepseek-coder-6.7b, all 9 NLQ sets, greedy + features.
+defaults:
+  - base
+  - data/drspider_nlq_all
+  - prompt/zero_shot_fence
+  - generation/greedy
+  - experiment/_cp2_common
+  - model/gpu/deepseek-coder-6.7b
+
+run_name: cp2_e1_deepseek-coder-6.7b

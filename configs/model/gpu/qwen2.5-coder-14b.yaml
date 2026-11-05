@@ -1,0 +1,8 @@
+model:
+  hf_id: Qwen/Qwen2.5-Coder-14B-Instruct
+  family: qwen2.5-coder
+  params_b: 14.77
+  revision: aedcc2d42b622764e023cf882b6652e646b95671
+  dtype: bfloat16
+  device: auto
+generation: {batch_size: 16}

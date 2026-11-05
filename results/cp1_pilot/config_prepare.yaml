@@ -1,0 +1,58 @@
+seed: 42
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  results_root: results
+run_name: cp1_pilot
+data:
+  name: drspider_nlq
+  source_url: https://media.githubusercontent.com/media/awslabs/diagnostic-robustness-text-to-sql/main/data.tar.gz
+  sha256: d0f47e4d2c9202f4fd2d956a34e9dd1ff8180c1c9e58cf5b530c13fefaaa3ba9
+  archive_name: drspider_data.tar.gz
+  extract_dir: drspider
+  db_subdir: Spider-dev/databases
+  perturbation_sets:
+  - NLQ_keyword_synonym
+  - NLQ_column_synonym
+  - NLQ_value_synonym
+  pairs_per_set: 100
+  one_pair_per_question: true
+model:
+  hf_id: Qwen/Qwen2.5-Coder-0.5B-Instruct
+  revision: ea3f2471cf1b1f0db85067f1ef93848e38e88c25
+  dtype: float32
+  device: auto
+  num_threads: null
+generation:
+  max_new_tokens: 192
+  batch_size: 4
+  do_sample: false
+  repetition_penalty: 1.0
+prompt:
+  system: You are an expert in SQLite. Given a database schema and a question, write
+    one SQLite query that answers the question.
+  user_template: 'Database schema:
+
+    {schema}
+
+
+    Question: {question}
+
+
+    Return only the SQL query.'
+  assistant_prefix: '```sql
+
+    '
+  stop_string: '```'
+evaluation:
+  timeout_s: 10
+  float_decimals: 4
+analysis:
+  primary_confidence: p_gm
+  confidence_metrics:
+  - p_gm
+  - p_min
+  - seq_logprob
+  - neg_entropy
+  ece_bins: 10
+  bootstrap_resamples: 1000

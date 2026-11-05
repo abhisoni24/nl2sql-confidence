@@ -1,0 +1,14 @@
+# Smoke test of the full CP2 pipeline: 0.5B model, 3 pairs per set (~50 questions).
+# Run before the real plan to catch environment problems in minutes, not hours.
+defaults:
+  - base
+  - data/drspider_nlq_all
+  - prompt/zero_shot_fence
+  - generation/greedy
+  - experiment/_cp2_common
+  - model/gpu/qwen2.5-coder-0.5b
+
+run_name: smoke_e1_qwen2.5-coder-0.5b
+data: {pairs_per_set: 3, one_pair_per_question: true}
+augment: {n_folds: 3}
+analysis: {bootstrap_resamples: 200}

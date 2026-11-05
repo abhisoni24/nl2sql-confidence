@@ -1,0 +1,10 @@
+# Second model family at ~7B, to check findings are not Qwen-specific.
+# No grouped-query attention, so its KV cache is ~9x Qwen-7B's per token: smaller batch.
+model:
+  hf_id: deepseek-ai/deepseek-coder-6.7b-instruct
+  family: deepseek-coder
+  params_b: 6.74
+  revision: e5d64addd26a6a1db0f9b863abf6ee3141936807
+  dtype: bfloat16
+  device: auto
+generation: {batch_size: 16}

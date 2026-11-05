@@ -1,0 +1,10 @@
+# Global defaults shared by every run. Later files in an experiment's `defaults`
+# list (and CLI overrides like `generation.batch_size=2`) take precedence.
+seed: 42                      # single seed for pair sampling and bootstrap resampling
+
+paths:                        # all relative to the repository root
+  raw_dir: data/raw
+  processed_dir: data/processed
+  results_root: results
+
+run_name: ???                 # mandatory; set by the experiment config

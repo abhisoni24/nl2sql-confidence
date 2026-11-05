@@ -1,0 +1,6 @@
+# 5-minute end-to-end check of every CP2 stage on the 0.5B model (run first on Colab).
+e1_runs:
+  - configs/experiment/smoke_e1_qwen2.5-coder-0.5b.yaml
+e3_run: configs/experiment/smoke_e3_qwen2.5-coder-0.5b.yaml
+e3_after: configs/experiment/smoke_e1_qwen2.5-coder-0.5b.yaml
+summary_dir: smoke_summary

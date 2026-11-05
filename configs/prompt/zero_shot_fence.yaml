@@ -1,0 +1,16 @@
+# Zero-shot prompt shared by every CP2 model (identical wording to CP1).
+prompt:
+  system: >-
+    You are an expert in SQLite. Given a database schema and a question,
+    write one SQLite query that answers the question.
+  user_template: |-
+    Database schema:
+    {schema}
+
+    Question: {question}
+
+    Return only the SQL query.
+  # The assistant turn is pre-filled with an opening code fence, and decoding
+  # stops at the closing fence. Confidence is computed over SQL tokens only.
+  assistant_prefix: "```sql\n"
+  stop_string: "```"

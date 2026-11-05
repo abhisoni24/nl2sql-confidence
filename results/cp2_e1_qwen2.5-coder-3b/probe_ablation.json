@@ -1,0 +1,26 @@
+{
+  "layer0.5_last_prompt": {
+    "auroc_clean": 0.6565187078782244,
+    "auroc_perturbed": 0.592058293902004
+  },
+  "layer0.5_sql_mean": {
+    "auroc_clean": 0.7497489684686858,
+    "auroc_perturbed": 0.7248701022421062
+  },
+  "layer0.75_last_prompt": {
+    "auroc_clean": 0.751494130904722,
+    "auroc_perturbed": 0.7128411830688104
+  },
+  "layer0.75_sql_mean": {
+    "auroc_clean": 0.8228090099491798,
+    "auroc_perturbed": 0.7916420623767099
+  },
+  "layer1.0_last_prompt": {
+    "auroc_clean": 0.7256324021415511,
+    "auroc_perturbed": 0.6894815048800299
+  },
+  "layer1.0_sql_mean": {
+    "auroc_clean": 0.7752774501335181,
+    "auroc_perturbed": 0.7474977759440956
+  }
+}

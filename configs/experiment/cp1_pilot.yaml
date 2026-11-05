@@ -1,0 +1,22 @@
+# CP1: pilot run for the Oct 6 mid-semester presentation.
+# Composition order (later wins): base -> data -> model -> this file -> CLI overrides.
+defaults:
+  - base
+  - data/drspider_nlq
+  - model/qwen2.5-coder-0.5b
+
+run_name: cp1_pilot
+
+# Added for CP2 code compatibility; keeps CP1 behavior (no loop guard existed then).
+generation:
+  loop_guard: {enabled: false, ngram: 10, repeats: 3}
+
+evaluation:
+  timeout_s: 10           # per-query SQLite execution budget
+  float_decimals: 4       # floats rounded before result comparison
+
+analysis:
+  primary_confidence: p_gm            # used for calibration (must lie in [0, 1])
+  confidence_metrics: [p_gm, p_min, seq_logprob, neg_entropy]
+  ece_bins: 10
+  bootstrap_resamples: 1000

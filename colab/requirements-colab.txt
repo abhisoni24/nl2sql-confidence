@@ -1,0 +1,10 @@
+# Colab installs on top of its preinstalled PyTorch / NumPy / pandas / SciPy / matplotlib.
+# Only the libraries whose versions matter for this code are pinned (versions the
+# harness was tested with on 2026-11-05). Torch is NOT reinstalled: Colab's build
+# matches its GPU drivers.
+transformers==5.22.1
+omegaconf==2.4.0
+scikit-learn>=1.5
+huggingface_hub
+safetensors
+tokenizers

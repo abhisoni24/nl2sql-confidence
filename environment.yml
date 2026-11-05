@@ -1,0 +1,25 @@
+# Conda environment for the NL2SQL confidence-under-perturbation study.
+# Create:  conda env create -f environment.yml
+# Update:  conda env update -f environment.yml --prune
+# Works on Linux (CPU / CUDA) and macOS (Apple Silicon uses the MPS backend).
+name: nl2sql-conf
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pytorch>=2.3          # CPU build from conda-forge; swap for a CUDA build on GPU nodes
+  - transformers>=4.44
+  - tokenizers
+  - safetensors
+  - huggingface_hub
+  - omegaconf>=2.3        # layered YAML configs with CLI overrides
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - tqdm
+  - pytest
+  - pip
+  - pip:
+      - -e .              # installs src/nl2sql_conf in editable mode

@@ -1,0 +1,8 @@
+# Decoding settings shared by every CP2 model. Model configs set batch_size.
+generation:
+  max_new_tokens: 192     # same cap as CP1
+  batch_size: 32          # overridden per model; halves automatically on CUDA OOM
+  loop_guard:             # stop a sequence once its trailing 10-gram has occurred 3 times
+    enabled: true
+    ngram: 10
+    repeats: 3
